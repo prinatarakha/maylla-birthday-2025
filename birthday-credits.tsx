@@ -15,8 +15,10 @@ const birthdayWishes = [
 -ravano`,
   `Happy 22nd my love wishing you all the bestt🤍
 -zaza`,
-  `Bebooo happy brothday sayang ku cinta. Im always proud of you, who you’ve become, dan semangat km menghadapi tantantangan yg ada. Thank you bebo udh memberikan kehangatan ke semua orang yg kamu temuin, ga hanya aku. Semoga hidup kamu penuh kehangatan dan cinta dari orang2 yg tepat ❤️. Semangat sayang i love u and ill see u soon!
--rakha`
+  `Bebooo happy birthday sayang ku cinta! Im always proud of you, who you’ve become, dan semangat km menghadapi tantantangan yg ada 💪. Thank you bebo udh memberikan kehangatan ke semua orang yg kamu temuin 🤗🤗. Semoga hidup kamu penuh kehangatan dan cinta dari orang2 yg tepat ❤️. Semangat sayang i love u and ill see u soon!
+-rakha`,
+  `happy birthday maymayy, semoga panjang umur, bahagia dan sehat selaluu 🫶🏻🥳 wishing u lots of abundance and success so that all ur dreams cone true🤍 tetep ambis and study hard biar kita bisa wujudin bisnis impian kita 😚😚 jangan lupa undang aku ke wedding km pls #lancarsampehariH😋 may god bless u and walk with u always #geminitwin♊️ love u lots 🫶🏻✊🏻 
+-nainai`
 ]
 
 export default function Component() {
