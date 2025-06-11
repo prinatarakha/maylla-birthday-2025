@@ -200,14 +200,14 @@ export default function Component() {
           {birthdayWishes.map((wish, index) => (
             <div
               key={index}
-              className="flex flex-wrap space-y-2"
+              className="flex flex-wrap"
               style={{
                 fontFamily: "'Circular', 'Spotify Circular', 'Helvetica Neue', Helvetica, Arial, sans-serif",
                 // fontWeight: 700,
               }}
             >
               {wish.split(" ").map((word, index) => (
-                <div key={index} className="text-white text-5xl md:text-8xl font-bold whitespace-wrap hover:underline pr-4 md:pr-8">
+                <div key={index} className="text-white text-5xl md:text-8xl font-bold whitespace-wrap hover:underline pt-2 pr-4 md:pr-8 break-all text-left">
                   {word}
                 </div>
               ))}
