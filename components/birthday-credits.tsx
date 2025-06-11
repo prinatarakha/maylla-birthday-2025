@@ -196,7 +196,7 @@ export default function Component() {
 
       {/* Scrolling container */}
       <div ref={containerRef} className="relative h-screen overflow-hidden z-20">
-        <div ref={contentRef} className="space-y-32 text-center px-8 pt-[100vh] pb-[100vh] max-w-4xl mx-auto md:px-16">
+        <div ref={contentRef} className="space-y-48 md:space-y-64 text-center px-8 pt-[100vh] pb-[100vh] max-w-4xl mx-auto md:px-16">
           {birthdayWishes.map((wish, index) => (
             <div
               key={index}
