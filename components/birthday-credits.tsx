@@ -1,8 +1,10 @@
 "use client"
 
 import type React from "react"
-
 import { useEffect, useState, useRef } from "react"
+import RestartButton from "./RestartButton"
+import ScrollUpButton from "./ScrollUpButton"
+import ScrollDownButton from "./ScrollDownButton"
 
 const birthdayWishes = [
   `Mamihhhh selamaat #22 yaaaauh. Semoga sehat bahagia sukses selalu. Dilancarkan kuliah, kerja, dan kehidupannya. Selalu di lindungi Allah SWT dimanapun mamih beradaa🫶 Semoga selalu dikelelilingi orang baik dan setiap pilihan hidup mamih akan berdampak dan berguna baik buat mamih sendiri kedepannya, buat orang disekitar mamih, buat keluarga dan pasangan. Walaupun kita jauh semoga hati kita selaluh dekaaatth. Looveee my gemini twinzi♊️✨❤️‍🔥😘 
@@ -26,78 +28,11 @@ export default function Component() {
   const [isDragging, setIsDragging] = useState(false)
   const [startY, setStartY] = useState(0)
   const [autoScroll, setAutoScroll] = useState(true)
-  const [mousePos, setMousePos] = useState({ x: 0, y: 0 })
-  const [isMouseMoving, setIsMouseMoving] = useState(false)
-  const [ballPos, setBallPos] = useState({ x: 0, y: 0 })
 
   const containerRef = useRef<HTMLDivElement>(null)
   const contentRef = useRef<HTMLDivElement>(null)
   const autoScrollTimeoutRef = useRef<NodeJS.Timeout | null>(null)
-  // const mouseTimeoutRef = useRef<NodeJS.Timeout | null>(null)
-  const animationRef = useRef<number>(0)
   const scrollAnimationRef = useRef<number>(0)
-
-  // // Handle mouse movement for the green ball
-  // const handleMouseMove = (e: MouseEvent) => {
-  //   setMousePos({ x: e.clientX, y: e.clientY })
-  //   setIsMouseMoving(true)
-
-  //   // Clear existing timeout
-  //   if (mouseTimeoutRef.current) {
-  //     clearTimeout(mouseTimeoutRef.current)
-  //   }
-
-  //   // Set mouse as not moving after 2 seconds
-  //   mouseTimeoutRef.current = setTimeout(() => {
-  //     setIsMouseMoving(false)
-  //   }, 2000)
-  // }
-
-  // Predetermined path animation
-  useEffect(() => {
-    if (isMouseMoving) return
-
-    const animate = () => {
-      const time = Date.now() * 0.001
-      const centerX = window.innerWidth / 2
-      const centerY = window.innerHeight / 2
-      const radiusX = 200
-      const radiusY = 150
-
-      setBallPos({
-        x: centerX + Math.cos(time) * radiusX,
-        y: centerY + Math.sin(time * 0.7) * radiusY,
-      })
-
-      animationRef.current = requestAnimationFrame(animate)
-    }
-
-    animationRef.current = requestAnimationFrame(animate)
-
-    return () => {
-      if (animationRef.current) {
-        cancelAnimationFrame(animationRef.current)
-      }
-    }
-  }, [isMouseMoving])
-
-  // Update ball position based on mouse or animation
-  useEffect(() => {
-    if (isMouseMoving) {
-      setBallPos(mousePos)
-    }
-  }, [mousePos, isMouseMoving])
-
-  // Add mouse move listener
-  // useEffect(() => {
-  //   window.addEventListener("mousemove", handleMouseMove)
-  //   return () => {
-  //     window.removeEventListener("mousemove", handleMouseMove)
-  //     if (mouseTimeoutRef.current) {
-  //       clearTimeout(mouseTimeoutRef.current)
-  //     }
-  //   }
-  // }, [])
 
   // Cleanup scroll animation on unmount
   useEffect(() => {
@@ -258,18 +193,6 @@ export default function Component() {
       onTouchMove={handleDragMove}
       onTouchEnd={handleDragEnd}
     >
-      {/* Animated green ball */}
-      {/* <div
-        className="absolute w-96 h-96 rounded-full pointer-events-none transition-all duration-300 ease-out"
-        style={{
-          left: ballPos.x - 192,
-          top: ballPos.y - 192,
-          background:
-            "radial-gradient(circle, rgba(34, 197, 94, 0.3) 0%, rgba(34, 197, 94, 0.1) 50%, transparent 100%)",
-          filter: "blur(20px)",
-          zIndex: 1,
-        }}
-      /> */}
 
       {/* Scrolling container */}
       <div ref={containerRef} className="relative h-screen overflow-hidden z-20">
@@ -293,68 +216,21 @@ export default function Component() {
         </div>
       </div>
 
-      {/* Restart button */}
-      <button
+      {/* Control buttons */}
+      <RestartButton 
         onClick={handleBackToTop}
-        className="absolute top-1/2 right-4 transform -translate-y-28 bg-white bg-opacity-20 hover:bg-opacity-30 text-white rounded-full p-3 transition-all duration-200 z-30 backdrop-blur-sm border border-white border-opacity-20"
-        aria-label="Restart from beginning"
-      >
-        <svg
-          width="24"
-          height="24"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        >
-          <path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/>
-          <path d="M21 3v5h-5"/>
-          <path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/>
-          <path d="M3 21v-5h5"/>
-        </svg>
-      </button>
-
-      {/* Scroll up button */}
-      <button
+        className="absolute top-1/2 right-4 transform -translate-y-28"
+      />
+      
+      <ScrollUpButton 
         onClick={handleScrollUp}
-        className="absolute top-1/2 right-4 transform -translate-y-12 bg-white bg-opacity-20 hover:bg-opacity-30 text-white rounded-full p-3 transition-all duration-200 z-30 backdrop-blur-sm border border-white border-opacity-20"
-        aria-label="Scroll up"
-      >
-        <svg
-          width="24"
-          height="24"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        >
-          <path d="m18 15-6-6-6 6"/>
-        </svg>
-      </button>
-
-      {/* Scroll down button */}
-      <button
+        className="absolute top-1/2 right-4 transform -translate-y-12"
+      />
+      
+      <ScrollDownButton 
         onClick={handleScrollDown}
-        className="absolute top-1/2 right-4 transform translate-y-4 bg-white bg-opacity-20 hover:bg-opacity-30 text-white rounded-full p-3 transition-all duration-200 z-30 backdrop-blur-sm border border-white border-opacity-20"
-        aria-label="Scroll down"
-      >
-        <svg
-          width="24"
-          height="24"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        >
-          <path d="m6 9 6 6 6-6"/>
-        </svg>
-      </button>
+        className="absolute top-1/2 right-4 transform translate-y-4"
+      />
 
       {/* Drag indicator */}
       <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 text-white text-sm opacity-50 z-30 font-bold">
