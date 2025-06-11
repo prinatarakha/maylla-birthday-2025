@@ -35,6 +35,7 @@ export default function Component() {
   const autoScrollTimeoutRef = useRef<NodeJS.Timeout | null>(null)
   // const mouseTimeoutRef = useRef<NodeJS.Timeout | null>(null)
   const animationRef = useRef<number>(0)
+  const scrollAnimationRef = useRef<number>(0)
 
   // // Handle mouse movement for the green ball
   // const handleMouseMove = (e: MouseEvent) => {
@@ -98,6 +99,15 @@ export default function Component() {
   //   }
   // }, [])
 
+  // Cleanup scroll animation on unmount
+  useEffect(() => {
+    return () => {
+      if (scrollAnimationRef.current) {
+        cancelAnimationFrame(scrollAnimationRef.current)
+      }
+    }
+  }, [])
+
   // Handle mouse/touch down
   const handleDragStart = (e: React.MouseEvent | React.TouchEvent) => {
     setIsDragging(true)
@@ -131,9 +141,69 @@ export default function Component() {
     }, 1000)
   }
 
+  // Smooth scroll animation function
+  const smoothScrollTo = (targetPosition: number) => {
+    const startPosition = scrollPosition
+    const distance = targetPosition - startPosition
+    const duration = 500 // 500ms animation
+    const startTime = Date.now()
+
+    const animateScroll = () => {
+      const elapsed = Date.now() - startTime
+      const progress = Math.min(elapsed / duration, 1)
+      
+      // Easing function (ease-out)
+      const easeOut = 1 - Math.pow(1 - progress, 3)
+      
+      const currentPosition = startPosition + (distance * easeOut)
+      setScrollPosition(currentPosition)
+
+      if (progress < 1) {
+        scrollAnimationRef.current = requestAnimationFrame(animateScroll)
+      }
+    }
+
+    // Cancel any existing scroll animation
+    if (scrollAnimationRef.current) {
+      cancelAnimationFrame(scrollAnimationRef.current)
+    }
+
+    scrollAnimationRef.current = requestAnimationFrame(animateScroll)
+  }
+
   // Handle back to top button click
   const handleBackToTop = () => {
-    setScrollPosition(0)
+    smoothScrollTo(0)
+    setAutoScroll(false)
+    
+    if (autoScrollTimeoutRef.current) {
+      clearTimeout(autoScrollTimeoutRef.current)
+    }
+
+    autoScrollTimeoutRef.current = setTimeout(() => {
+      setAutoScroll(true)
+    }, 500)
+  }
+
+  // Handle scroll up button click
+  const handleScrollUp = () => {
+    const newPosition = scrollPosition - 300
+    smoothScrollTo(newPosition)
+    setAutoScroll(false)
+    
+    if (autoScrollTimeoutRef.current) {
+      clearTimeout(autoScrollTimeoutRef.current)
+    }
+
+    autoScrollTimeoutRef.current = setTimeout(() => {
+      setAutoScroll(true)
+    }, 1000)
+  }
+
+  // Handle scroll down button click
+  const handleScrollDown = () => {
+    const newPosition = scrollPosition + 300
+    smoothScrollTo(newPosition)
     setAutoScroll(false)
     
     if (autoScrollTimeoutRef.current) {
@@ -170,8 +240,8 @@ export default function Component() {
       clampedScrollPosition = 0 // Loop back to top
       setScrollPosition(0)
     } else if (scrollPosition < 0) {
-      clampedScrollPosition = 0
-      setScrollPosition(0)
+      clampedScrollPosition = maxScroll + scrollPosition
+      setScrollPosition(clampedScrollPosition)
     }
 
     contentRef.current.style.transform = `translateY(${-clampedScrollPosition}px)`
@@ -179,7 +249,7 @@ export default function Component() {
 
   return (
     <div
-      className="min-h-screen bg-blue-400 overflow-hidden relative"
+      className="min-h-screen overflow-hidden relative bg-gradient-to-b from-blue-400 to-blue-300"
       onMouseDown={handleDragStart}
       onMouseMove={handleDragMove}
       onMouseUp={handleDragEnd}
@@ -223,11 +293,34 @@ export default function Component() {
         </div>
       </div>
 
-      {/* Back to top button */}
+      {/* Restart button */}
       <button
         onClick={handleBackToTop}
-        className="absolute top-4 right-4 bg-white bg-opacity-20 hover:bg-opacity-30 text-white rounded-full p-3 transition-all duration-200 z-30 backdrop-blur-sm border border-white border-opacity-20"
-        aria-label="Back to top"
+        className="absolute top-1/2 right-4 transform -translate-y-28 bg-white bg-opacity-20 hover:bg-opacity-30 text-white rounded-full p-3 transition-all duration-200 z-30 backdrop-blur-sm border border-white border-opacity-20"
+        aria-label="Restart from beginning"
+      >
+        <svg
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        >
+          <path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/>
+          <path d="M21 3v5h-5"/>
+          <path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/>
+          <path d="M3 21v-5h5"/>
+        </svg>
+      </button>
+
+      {/* Scroll up button */}
+      <button
+        onClick={handleScrollUp}
+        className="absolute top-1/2 right-4 transform -translate-y-12 bg-white bg-opacity-20 hover:bg-opacity-30 text-white rounded-full p-3 transition-all duration-200 z-30 backdrop-blur-sm border border-white border-opacity-20"
+        aria-label="Scroll up"
       >
         <svg
           width="24"
@@ -240,6 +333,26 @@ export default function Component() {
           strokeLinejoin="round"
         >
           <path d="m18 15-6-6-6 6"/>
+        </svg>
+      </button>
+
+      {/* Scroll down button */}
+      <button
+        onClick={handleScrollDown}
+        className="absolute top-1/2 right-4 transform translate-y-4 bg-white bg-opacity-20 hover:bg-opacity-30 text-white rounded-full p-3 transition-all duration-200 z-30 backdrop-blur-sm border border-white border-opacity-20"
+        aria-label="Scroll down"
+      >
+        <svg
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        >
+          <path d="m6 9 6 6 6-6"/>
         </svg>
       </button>
 
